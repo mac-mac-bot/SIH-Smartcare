@@ -1,0 +1,6 @@
+{
+  "name": "SmartCare-TN",
+  "description": "Mobile-first, offline-first public healthcare access and referral support PWA for rural and underserved communities in Tamil Nadu.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
