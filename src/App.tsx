@@ -38,6 +38,8 @@ import { EmergencyBtn } from "./components/EmergencyBtn";
 import { StaffDashboard } from "./components/StaffDashboard";
 import { AdminDashboard } from "./components/AdminDashboard";
 
+
+
 const SERVICES_LIST = [
   "X-Ray",
   "General Consultation",
@@ -440,7 +442,7 @@ export default function App() {
                   {t.appName}
                 </h1>
                 <p className="text-[10px] text-teal-200 font-medium mt-0.5">
-                  {t.tagline}
+                  {t.appSubtitle}
                 </p>
               </div>
             </div>
@@ -685,7 +687,7 @@ export default function App() {
             }`}
           >
             <MapIcon className="w-5 h-5" />
-            <span className="text-[10px] mt-0.5">{t.navMap}</span>
+            <span className="text-[10px] mt-0.5">Map</span>
           </button>
 
           <button
