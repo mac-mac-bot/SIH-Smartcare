@@ -1,6 +1,6 @@
 {
   "name": "SmartCare-TN",
-  "description": "Mobile-first, offline-first public healthcare access and referral support PWA for rural and underserved communities in Tamil Nadu.",
+  "description": "React Native mobile application running in Expo Go for rural and underserved communities in Tamil Nadu with offline radar, smart clinical referral, and medicine inventory.",
   "requestFramePermissions": ["geolocation"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
