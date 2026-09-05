@@ -37,6 +37,9 @@ import { HealthRecordView } from "./components/HealthRecordView";
 import { EmergencyBtn } from "./components/EmergencyBtn";
 import { StaffDashboard } from "./components/StaffDashboard";
 import { AdminDashboard } from "./components/AdminDashboard";
+import { MobileExpoSimulator } from "./components/MobileExpoSimulator";
+import { ExpoGoHub } from "./components/ExpoGoHub";
+import { Smartphone, QrCode, Globe } from "lucide-react";
 
 const SERVICES_LIST = [
   "X-Ray",
@@ -76,10 +79,38 @@ export default function App() {
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [syncMeta, setSyncMeta] = useState<SyncMetadata | null>(null);
 
+  // View mode switcher: Expo Mobile simulator (default), Expo Hub (QR & setup), Web Portal
+  const [viewMode, setViewMode] = useState<"expo-mobile" | "expo-hub" | "web-portal">("expo-mobile");
+
   // User location: defaults to Cheranmahadevi (Demo location)
   const [userLat, setUserLat] = useState<number>(DEMO_LAT);
   const [userLon, setUserLon] = useState<number>(DEMO_LON);
   const [isLiveGps, setIsLiveGps] = useState<boolean>(false);
+
+  // Toggle GPS
+  const handleToggleGps = () => {
+    if (isLiveGps) {
+      setUserLat(DEMO_LAT);
+      setUserLon(DEMO_LON);
+      setIsLiveGps(false);
+    } else {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            setUserLat(pos.coords.latitude);
+            setUserLon(pos.coords.longitude);
+            setIsLiveGps(true);
+          },
+          (err) => {
+            console.warn("GPS error, using demo location:", err);
+            setUserLat(DEMO_LAT);
+            setUserLon(DEMO_LON);
+            setIsLiveGps(false);
+          }
+        );
+      }
+    }
+  };
 
   // Active healthcare service selection (defaults to X-Ray for Demo 1)
   const [selectedService, setSelectedService] = useState<string>("X-Ray");
@@ -393,8 +424,76 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col items-center">
-      {/* Container simulating mobile-first layout (up to max-w-xl on desktop) */}
-      <div className="w-full max-w-xl min-h-screen bg-white shadow-xl flex flex-col relative border-x border-slate-200">
+      {/* Top Application Mode Bar: Expo Go Mobile vs QR Setup vs Web Portal */}
+      <div className="w-full bg-slate-900 border-b border-slate-800 text-white px-3 py-2 flex items-center justify-between shadow-md shrink-0 sticky top-0 z-50">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded bg-teal-600 flex items-center justify-center font-bold text-xs text-white">
+            S
+          </div>
+          <span className="font-bold text-xs tracking-tight hidden sm:inline text-white">
+            SmartCare-TN
+          </span>
+          <span className="bg-teal-900/80 text-teal-300 border border-teal-700/50 text-[10px] px-2 py-0.5 rounded font-mono">
+            Expo Go Native Format
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1 bg-slate-800 p-0.5 rounded-lg border border-slate-700">
+          <button
+            onClick={() => setViewMode("expo-mobile")}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+              viewMode === "expo-mobile"
+                ? "bg-teal-600 text-white shadow-sm"
+                : "text-slate-300 hover:text-white"
+            }`}
+          >
+            <Smartphone className="w-3.5 h-3.5" />
+            <span>Mobile App</span>
+          </button>
+
+          <button
+            onClick={() => setViewMode("expo-hub")}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+              viewMode === "expo-hub"
+                ? "bg-teal-600 text-white shadow-sm"
+                : "text-slate-300 hover:text-white"
+            }`}
+          >
+            <QrCode className="w-3.5 h-3.5" />
+            <span>Expo Go QR & Run</span>
+          </button>
+
+          <button
+            onClick={() => setViewMode("web-portal")}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+              viewMode === "web-portal"
+                ? "bg-teal-600 text-white shadow-sm"
+                : "text-slate-300 hover:text-white"
+            }`}
+          >
+            <Globe className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Admin/Staff Portal</span>
+            <span className="sm:hidden">Portal</span>
+          </button>
+        </div>
+      </div>
+
+      {viewMode === "expo-mobile" ? (
+        <MobileExpoSimulator
+          facilities={facilities}
+          lang={lang}
+          onLangChange={handleLangChange}
+          userLat={userLat}
+          userLon={userLon}
+          isLiveGps={isLiveGps}
+          onToggleGps={handleToggleGps}
+          onOpenExpoHub={() => setViewMode("expo-hub")}
+        />
+      ) : viewMode === "expo-hub" ? (
+        <ExpoGoHub onSwitchToMobileSimulator={() => setViewMode("expo-mobile")} />
+      ) : (
+        /* Container simulating mobile-first layout (up to max-w-xl on desktop) */
+        <div className="w-full max-w-xl min-h-screen bg-white shadow-xl flex flex-col relative border-x border-slate-200">
         {/* PWA In-App Install Banner */}
         <PWAInstallBanner />
 
@@ -737,6 +836,7 @@ export default function App() {
           </button>
         </nav>
       </div>
+      )}
     </div>
   );
 }
