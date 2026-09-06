@@ -425,61 +425,7 @@ export default function App() {
   }, [facilities, userLat, userLon, selectedService]);
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col items-center">
-      {/* Top Application Mode Bar: Expo Go Mobile vs QR Setup vs Web Portal */}
-      <div className="w-full bg-slate-900 border-b border-slate-800 text-white px-3 py-2 flex items-center justify-between shadow-md shrink-0 sticky top-0 z-50">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-teal-600 flex items-center justify-center font-bold text-xs text-white">
-            S
-          </div>
-          <span className="font-bold text-xs tracking-tight hidden sm:inline text-white">
-            SmartCare-TN
-          </span>
-          <span className="bg-teal-900/80 text-teal-300 border border-teal-700/50 text-[10px] px-2 py-0.5 rounded font-mono">
-            Expo Go Native Format
-          </span>
-        </div>
-
-        <div className="flex items-center gap-1 bg-slate-800 p-0.5 rounded-lg border border-slate-700">
-          <button
-            onClick={() => setViewMode("expo-mobile")}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
-              viewMode === "expo-mobile"
-                ? "bg-teal-600 text-white shadow-sm"
-                : "text-slate-300 hover:text-white"
-            }`}
-          >
-            <Smartphone className="w-3.5 h-3.5" />
-            <span>Mobile App</span>
-          </button>
-
-          <button
-            onClick={() => setViewMode("expo-hub")}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
-              viewMode === "expo-hub"
-                ? "bg-teal-600 text-white shadow-sm"
-                : "text-slate-300 hover:text-white"
-            }`}
-          >
-            <QrCode className="w-3.5 h-3.5" />
-            <span>Expo Go QR & Run</span>
-          </button>
-
-          <button
-            onClick={() => setViewMode("web-portal")}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
-              viewMode === "web-portal"
-                ? "bg-teal-600 text-white shadow-sm"
-                : "text-slate-300 hover:text-white"
-            }`}
-          >
-            <Globe className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Admin/Staff Portal</span>
-            <span className="sm:hidden">Portal</span>
-          </button>
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col w-full">
       {viewMode === "expo-mobile" ? (
         <MobileExpoSimulator
           facilities={facilities}
@@ -490,6 +436,11 @@ export default function App() {
           isLiveGps={isLiveGps}
           onToggleGps={handleToggleGps}
           onOpenExpoHub={() => setViewMode("expo-hub")}
+          onLocationUpdate={(lat, lon, isLive) => {
+            setUserLat(lat);
+            setUserLon(lon);
+            setIsLiveGps(isLive);
+          }}
         />
       ) : viewMode === "expo-hub" ? (
         <ExpoGoHub onSwitchToMobileSimulator={() => setViewMode("expo-mobile")} />
